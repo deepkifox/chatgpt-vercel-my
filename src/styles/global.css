@@ -45,3 +45,31 @@ main {
 * {
   -webkit-tap-highlight-color: transparent;
 }
+.mt-2 {
+  margin-top: 0.5rem;
+}
+.fi, [fi=""] {
+  display: flex;
+  align-items: center;
+}
+.gpt-title {
+  margin-right: 0.25rem;
+  font-size: 1.5rem;
+  line-height: 2rem;
+  font-weight: 800;
+}
+.gpt-subtitle, [gpt-subtitle=""] {
+  --un-gradient-from: rgba(56,189,248,var(--un-from-opacity, 1));
+  --un-gradient-to: rgba(56,189,248,0);
+  --un-gradient-stops: var(--un-gradient-from), var(--un-gradient-to);
+  --un-gradient-to: rgba(5,150,105,var(--un-to-opacity, 1));
+  --un-gradient-shape: to right;
+  --un-gradient: var(--un-gradient-shape), var(--un-gradient-stops);
+  background-image: linear-gradient(var(--un-gradient));
+  -webkit-background-clip: text;
+  background-clip: text;
+  font-size: 1.5rem;
+  line-height: 2rem;
+  font-weight: 800;
+  color: transparent;
+}
