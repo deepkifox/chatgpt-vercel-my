@@ -31,9 +31,9 @@ html.dark {
 }
 
 main {
-  max-width: 72ch;
+  max-width: 80%;
   margin: 0 auto;
-  padding: 8em 2em;
+  padding: 2em 0em;
 }
 
 @media (max-width: 768px) {
