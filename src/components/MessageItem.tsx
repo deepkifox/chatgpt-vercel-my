@@ -54,7 +54,7 @@ export default ({ role, message }: Props) => {
         class={`shrink-0 w-7 h-7 mt-4 rounded-full op-80 ${roleClass[role]}`}
       ></div>
       <div
-        class="message prose prose-slate dark:prose-invert dark:text-slate break-words overflow-hidden" style="max-width:80%!important;"
+        class="message prose prose-slate dark:prose-invert dark:text-slate break-words overflow-hidden" style="max-width:90%!important;"
         innerHTML={htmlString()}
       />
       <Clipboard
