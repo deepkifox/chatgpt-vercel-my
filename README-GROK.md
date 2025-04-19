@@ -1,14 +1,22 @@
 # Grok-3 客户端 
 
-这是一个基于xAI Grok-3 API的聊天客户端，从原有的ChatGPT客户端改造而来。
+这是一个基于xAI Grok-3-beta API的聊天客户端，从原有的ChatGPT客户端改造而来。
 
 ## 项目特点
 
-- 使用xAI Grok-3模型进行对话
+- 使用xAI Grok-3-beta模型进行对话
 - 支持连续对话功能
 - 支持会话历史记录
 - 支持温度设置调整回答多样性
 - 支持系统角色提示词
+
+## API更新说明
+
+本项目已从OpenAI ChatGPT API更新为xAI Grok API。主要更改包括：
+
+1. API端点从`https://api.openai.com/v1`更改为`https://api.x.ai/v1`
+2. 模型名称从`gpt-3.5-turbo`更改为`grok-3-beta`
+3. 环境变量从`OPENAI_API_KEY`更改为`XAI_API_KEY`
 
 ## 部署方式
 
@@ -20,11 +28,26 @@
 ## 环境变量
 
 ```
-XAI_API_KEY=xai_your_api_key_here
+XAI_API_KEY=你的xAI_API密钥
 ```
+
+## 如何获取xAI API密钥
+
+1. 访问xAI开发者平台
+2. 注册/登录您的账户
+3. 在开发者设置中创建新的API密钥
+4. 将生成的API密钥复制到应用的设置中
 
 ## 技术栈
 
 - Astro
 - SolidJS
 - Vercel部署 
+
+## 常见问题
+
+**Q: 为什么提示"没有填写xAI API key"？**
+A: 确保您已在设置中填入有效的xAI API密钥，或在环境变量中设置了`XAI_API_KEY`。如果仍有问题，尝试清除浏览器缓存。
+
+**Q: 对话没有响应怎么办？**
+A: 检查您的API密钥是否有效，以及xAI API服务是否可用。 

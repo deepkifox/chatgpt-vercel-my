@@ -19,14 +19,14 @@ export const post: APIRoute = async ({ request }) => {
     }
   }
 
-  const response = await fetch(`https://api.xai.com/v1/chat/completions`, {
+  const response = await fetch(`https://api.x.ai/v1/chat/completions`, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${key}`,
       "Content-Type": `application/json`
     },
     body: JSON.stringify({
-      model: "grok-3",
+      model: "grok-3-beta",
       messages: [
         {
           role: "user",

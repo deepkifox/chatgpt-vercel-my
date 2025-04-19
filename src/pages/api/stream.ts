@@ -22,7 +22,7 @@ export const post: APIRoute = async context => {
   const encoder = new TextEncoder()
   const decoder = new TextDecoder()
 
-  if (!key.startsWith("xai_")) key = apiKey
+  if (!key) key = apiKey
   if (!key) {
     return new Response("没有填写 xAI API key")
   }
@@ -30,14 +30,14 @@ export const post: APIRoute = async context => {
     return new Response("没有输入任何文字")
   }
 
-  const completion = await fetch("https://api.xai.com/v1/chat/completions", {
+  const completion = await fetch("https://api.x.ai/v1/chat/completions", {
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${key}`
     },
     method: "POST",
     body: JSON.stringify({
-      model: "grok-3",
+      model: "grok-3-beta",
       messages,
       temperature,
       stream: true
@@ -59,7 +59,7 @@ export const post: APIRoute = async context => {
             //   id: 'chatcmpl-abc123',
             //   object: 'chat.completion.chunk',
             //   created: 1677729391,
-            //   model: 'grok-3',
+            //   model: 'grok-3-beta',
             //   choices: [
             //     { delta: { content: '你' }, index: 0, finish_reason: null }
             //   ],

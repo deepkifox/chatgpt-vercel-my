@@ -41,6 +41,17 @@ export default function () {
     createResizeObserver(containerRef, ({ width, height }, el) => {
       if (el === containerRef) setContainerWidth(`${width}px`)
     })
+    
+    // 检查是否存在旧版本的设置，如果是第一次使用新版本，则清除
+    const lastVersion = localStorage.getItem("grokClientVersion")
+    if (lastVersion !== "1.0.0") {
+      // 清除本地存储中的旧设置
+      localStorage.removeItem("setting")
+      localStorage.removeItem("session")
+      // 设置新版本标记
+      localStorage.setItem("grokClientVersion", "1.0.0")
+    }
+    
     const storage = localStorage.getItem("setting")
     const session = localStorage.getItem("session")
     try {
