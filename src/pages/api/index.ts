@@ -19,36 +19,49 @@ export const post: APIRoute = async ({ request }) => {
     }
   }
 
-  const response = await fetch(`https://api.x.ai/v1/chat/completions`, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${key}`,
-      "Content-Type": `application/json`
-    },
-    body: JSON.stringify({
-      model: "grok-3-beta",
-      messages: [
-        {
-          role: "user",
-          content: message
-        }
-      ]
+  try {
+    const response = await fetch(`https://api.x.ai/v1/chat/completions`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${key}`,
+        "Content-Type": `application/json`
+      },
+      body: JSON.stringify({
+        model: "grok-3-beta",
+        messages: [
+          {
+            role: "user",
+            content: message
+          }
+        ]
+      })
     })
-  })
-  let result = await response.json()
-  if (result?.error) {
+    
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}))
+      return {
+        body: JSON.stringify({
+          success: false,
+          message: errorData?.error?.message || `API请求失败: ${response.status}`
+        })
+      }
+    }
+    
+    let result = await response.json()
+    return {
+      body: JSON.stringify({
+        success: true,
+        message: "ok",
+        data: result?.choices?.[0].message
+      })
+    }
+  } catch (error: any) {
+    console.error("xAI API请求错误:", error)
     return {
       body: JSON.stringify({
         success: false,
-        message: `${result.error?.message}`
+        message: `API请求错误: ${error.message || "未知错误"}`
       })
     }
-  }
-  return {
-    body: JSON.stringify({
-      success: true,
-      message: "ok",
-      data: result?.choices?.[0].message
-    })
   }
 }

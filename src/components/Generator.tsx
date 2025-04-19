@@ -179,40 +179,59 @@ export default function () {
       role: "user",
       content: systemRule ? systemRule + "\n" + inputValue : inputValue
     }
-    const response = await fetch("/api/stream", {
-      method: "POST",
-      body: JSON.stringify({
-        messages: setting().continuousDialogue
-          ? [...messageList().slice(0, -1), message]
-          : [message],
-        key: setting().xaiAPIKey,
-        temperature: setting().xaiAPITemperature / 100
-      }),
-      signal: controller.signal
-    })
-    if (!response.ok) {
-      throw new Error(response.statusText)
-    }
-    const data = response.body
-    if (!data) {
-      throw new Error("没有返回数据")
-    }
-    const reader = data.getReader()
-    const decoder = new TextDecoder("utf-8")
-    let done = false
-
-    while (!done) {
-      const { value, done: readerDone } = await reader.read()
-      if (value) {
-        let char = decoder.decode(value)
-        if (char === "\n" && currentAssistantMessage().endsWith("\n")) {
-          continue
+    
+    try {
+      const response = await fetch("/api/stream", {
+        method: "POST",
+        body: JSON.stringify({
+          messages: setting().continuousDialogue
+            ? [...messageList().slice(0, -1), message]
+            : [message],
+          key: setting().xaiAPIKey,
+          temperature: setting().xaiAPITemperature / 100
+        }),
+        signal: controller.signal,
+        headers: {
+          "Content-Type": "application/json"
         }
-        if (char) {
-          setCurrentAssistantMessage(currentAssistantMessage() + char)
-        }
+      })
+      
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData?.message || `API请求失败: ${response.status}`);
       }
-      done = readerDone
+      
+      const data = response.body
+      if (!data) {
+        throw new Error("没有返回数据")
+      }
+      
+      const reader = data.getReader()
+      const decoder = new TextDecoder("utf-8")
+      let done = false
+
+      while (!done) {
+        const { value, done: readerDone } = await reader.read()
+        if (value) {
+          let char = decoder.decode(value)
+          if (char === "\n" && currentAssistantMessage().endsWith("\n")) {
+            continue
+          }
+          if (char) {
+            setCurrentAssistantMessage(currentAssistantMessage() + char)
+          }
+        }
+        done = readerDone
+      }
+    } catch (error: any) {
+      console.error("聊天请求错误:", error);
+      setCurrentAssistantMessage(
+        String(error).includes("The user aborted a request")
+          ? "请求已取消"
+          : `错误: ${error.message || String(error)}`
+      )
+      setLoading(false)
+      setController(undefined)
     }
   }
 
