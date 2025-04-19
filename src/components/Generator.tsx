@@ -174,8 +174,8 @@ export default function () {
         messages: setting().continuousDialogue
           ? [...messageList().slice(0, -1), message]
           : [message],
-        key: setting().openaiAPIKey,
-        temperature: setting().openaiAPITemperature / 100
+        key: setting().xaiAPIKey,
+        temperature: setting().xaiAPITemperature / 100
       }),
       signal: controller.signal
     })

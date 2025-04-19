@@ -5,8 +5,8 @@ import {
   ReconnectInterval
 } from "eventsource-parser"
 
-const localEnv = import.meta.env.OPENAI_API_KEY
-const vercelEnv = process.env.OPENAI_API_KEY
+const localEnv = import.meta.env.XAI_API_KEY
+const vercelEnv = process.env.XAI_API_KEY
 
 const apiKeys = ((localEnv || vercelEnv)?.split(/\s*\|\s*/) ?? []).filter(
   Boolean
@@ -22,22 +22,22 @@ export const post: APIRoute = async context => {
   const encoder = new TextEncoder()
   const decoder = new TextDecoder()
 
-  if (!key.startsWith("sk-")) key = apiKey
+  if (!key.startsWith("xai_")) key = apiKey
   if (!key) {
-    return new Response("没有填写 OpenAI API key")
+    return new Response("没有填写 xAI API key")
   }
   if (!messages) {
     return new Response("没有输入任何文字")
   }
 
-  const completion = await fetch("https://api.openai.com/v1/chat/completions", {
+  const completion = await fetch("https://api.xai.com/v1/chat/completions", {
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${key}`
     },
     method: "POST",
     body: JSON.stringify({
-      model: "gpt-3.5-turbo",
+      model: "grok-3",
       messages,
       temperature,
       stream: true
@@ -54,11 +54,12 @@ export const post: APIRoute = async context => {
             return
           }
           try {
-            // response = {
-            //   id: 'chatcmpl-6pULPSegWhFgi0XQ1DtgA3zTa1WR6',
+            // xAI API响应结构
+            // {
+            //   id: 'chatcmpl-abc123',
             //   object: 'chat.completion.chunk',
             //   created: 1677729391,
-            //   model: 'gpt-3.5-turbo-0301',
+            //   model: 'grok-3',
             //   choices: [
             //     { delta: { content: '你' }, index: 0, finish_reason: null }
             //   ],

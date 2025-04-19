@@ -12,15 +12,15 @@ export default function Setting(props: {
   return (
     <div class="text-sm text-slate-7 dark:text-slate mb-2">
       <Show when={shown()}>
-        <SettingItem icon="i-carbon:api" label="OpenAI API Key">
+        <SettingItem icon="i-carbon:api" label="xAI API Key">
           <input
             type="password"
-            value={props.setting().openaiAPIKey}
+            value={props.setting().xaiAPIKey}
             class="max-w-150px ml-1em px-1 text-slate-7 dark:text-slate rounded-sm bg-slate bg-op-15 focus:bg-op-20 focus:ring-0 focus:outline-none"
             onInput={e => {
               props.setSetting({
                 ...props.setting(),
-                openaiAPIKey: (e.target as HTMLInputElement).value
+                xaiAPIKey: (e.target as HTMLInputElement).value
               })
             }}
           />
@@ -43,12 +43,12 @@ export default function Setting(props: {
             type="range"
             min={0}
             max={100}
-            value={String(props.setting().openaiAPITemperature)}
+            value={String(props.setting().xaiAPITemperature)}
             class="max-w-150px w-full h-2 bg-slate bg-op-15 rounded-lg appearance-none cursor-pointer accent-slate"
             onInput={e => {
               props.setSetting({
                 ...props.setting(),
-                openaiAPITemperature: Number(
+                xaiAPITemperature: Number(
                   (e.target as HTMLInputElement).value
                 )
               })

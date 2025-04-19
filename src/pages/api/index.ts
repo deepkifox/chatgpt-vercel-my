@@ -14,19 +14,19 @@ export const post: APIRoute = async ({ request }) => {
     return {
       body: JSON.stringify({
         success: false,
-        message: "openapi key is required"
+        message: "xai api key is required"
       })
     }
   }
 
-  const response = await fetch(`https://api.openai.com/v1/chat/completions`, {
+  const response = await fetch(`https://api.xai.com/v1/chat/completions`, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${key}`,
       "Content-Type": `application/json`
     },
     body: JSON.stringify({
-      model: "gpt-3.5-turbo",
+      model: "grok-3",
       messages: [
         {
           role: "user",
