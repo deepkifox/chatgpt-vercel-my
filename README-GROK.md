@@ -1,4 +1,4 @@
-# Grok-3 客户端
+# Grok-3 客户端 ok
 
 这是一个基于xAI Grok-3 API的聊天客户端，从原有的ChatGPT客户端改造而来。
 
