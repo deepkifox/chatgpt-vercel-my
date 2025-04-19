@@ -44,7 +44,7 @@ export const post: APIRoute = async context => {
         "Authorization": `Bearer ${key}`
       },
       body: JSON.stringify({
-        model: "grok-3-beta",
+        model: "grok-3",
         messages,
         temperature,
         stream: true
