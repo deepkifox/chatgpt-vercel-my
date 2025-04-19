@@ -29,29 +29,68 @@ export const post: APIRoute = async context => {
     return new Response("没有输入任何文字", { status: 400 })
   }
 
+  console.log("API请求：", {
+    endpoint: "https://api.x.ai/v1/chat/completions",
+    hasKey: !!key,
+    messagesCount: messages.length,
+    temperature
+  })
+
   try {
-    const completion = await fetch("https://api.x.ai/v1/chat/completions", {
+    const requestConfig = {
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${key}`
+        "Authorization": `Bearer ${key}`
       },
-      method: "POST",
       body: JSON.stringify({
         model: "grok-3-beta",
         messages,
         temperature,
         stream: true
       })
-    })
+    }
+
+    const completion = await fetch("https://api.x.ai/v1/chat/completions", requestConfig)
 
     if (!completion.ok) {
-      const error = await completion.json().catch(() => ({}))
+      const errorText = await completion.text().catch(() => "无法解析错误响应")
+      let errorJson = {}
+      try {
+        errorJson = JSON.parse(errorText)
+      } catch (e) {
+        // 如果不是JSON格式，保持errorJson为空对象
+      }
+      
+      console.error("xAI API请求失败:", {
+        status: completion.status,
+        statusText: completion.statusText,
+        errorBody: errorText
+      })
+      
+      let errorMessage = `API请求失败: ${completion.status}`
+      if (completion.status === 401 || completion.status === 403) {
+        errorMessage = "API密钥无效或未授权，请检查您的xAI API密钥"
+      } else if (completion.status === 429) {
+        errorMessage = "API请求过多，请稍后再试"
+      } else if (completion.status >= 500) {
+        errorMessage = "xAI服务器错误，请稍后再试"
+      }
+      
+      if (errorJson.error?.message) {
+        errorMessage += `: ${errorJson.error.message}`
+      }
+      
       return new Response(
         JSON.stringify({
           error: true,
-          message: error?.error?.message || `API请求失败: ${completion.status}`
+          message: errorMessage,
+          details: errorJson.error || null
         }),
-        { status: completion.status, headers: { "Content-Type": "application/json" } }
+        { 
+          status: completion.status, 
+          headers: { "Content-Type": "application/json" } 
+        }
       )
     }
 
@@ -72,14 +111,20 @@ export const post: APIRoute = async context => {
                 controller.enqueue(queue)
               }
             } catch (e) {
+              console.error("解析流数据错误:", e)
               controller.error(e)
             }
           }
         }
 
         const parser = createParser(streamParser)
-        for await (const chunk of completion.body as any) {
-          parser.feed(decoder.decode(chunk))
+        try {
+          for await (const chunk of completion.body as any) {
+            parser.feed(decoder.decode(chunk))
+          }
+        } catch (e) {
+          console.error("读取流数据错误:", e)
+          controller.error(e)
         }
       }
     })
@@ -90,7 +135,8 @@ export const post: APIRoute = async context => {
     return new Response(
       JSON.stringify({ 
         error: true, 
-        message: `API请求错误: ${error.message || "未知错误"}` 
+        message: `API请求错误: ${error.message || "未知错误"}`,
+        stack: process.env.NODE_ENV === "development" ? error.stack : undefined
       }), 
       { status: 500, headers: { "Content-Type": "application/json" } }
     )
